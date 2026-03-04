@@ -1,0 +1,791 @@
+{
+  "name": "GTM Assignment 2",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        576,
+        -192
+      ],
+      "id": "050922f1-a6bc-4309-b08b-c9682817109e",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1120,
+        -544
+      ],
+      "id": "fa584bdc-0639-430d-bf08-f1cf89b38500",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        464,
+        -608
+      ],
+      "id": "a2c41c04-ca59-4bff-896d-3b686a927a03",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "resend-replies",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        -400
+      ],
+      "id": "efd48919-7f4f-4977-a5f0-708cadb53e45",
+      "name": "Resend Reply Webhook",
+      "webhookId": "8d0e1070-9db7-4ecc-bd14-53f31e2025a9"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  const body = item.json.body || {};\n  const data = body.data || {};\n\n  return {\n    json: {\n      email: data.from || \"\",\n      subject: data.subject || \"\",\n      resend_email_id: data.email_id || \"\",\n      message_id: data.message_id || \"\",\n      received_at: body.created_at || \"\",\n      event_type: body.type || \"\"\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        -400
+      ],
+      "id": "415bce8c-6af8-43f0-8292-e4d5b27733c9",
+      "name": "Clean and Extraction node"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ivETqLu7XA2PpUbEtbL0FMNisw05-knO-RjpsPWVLwU",
+          "mode": "list",
+          "cachedResultName": "GTM Assignment 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ivETqLu7XA2PpUbEtbL0FMNisw05-knO-RjpsPWVLwU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "ANAKIN OUTREACH",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ivETqLu7XA2PpUbEtbL0FMNisw05-knO-RjpsPWVLwU/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "email",
+              "lookupValue": "={{ $json.email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        400,
+        -400
+      ],
+      "id": "c75af8df-03bf-4daa-8b5d-5770e9a30a13",
+      "name": "Get action",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WPXsaefpBJEceZ7M",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ivETqLu7XA2PpUbEtbL0FMNisw05-knO-RjpsPWVLwU",
+          "mode": "list",
+          "cachedResultName": "GTM Assignment 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ivETqLu7XA2PpUbEtbL0FMNisw05-knO-RjpsPWVLwU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "ANAKIN OUTREACH",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ivETqLu7XA2PpUbEtbL0FMNisw05-knO-RjpsPWVLwU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.resend_email_id }}",
+            "reply_subject": "",
+            "reply_time": "={{ $json.received_at }}",
+            "status": "={{ $json.status }}",
+            "row_number": "={{$json.row_number}}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "firstname",
+              "displayName": "firstname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lastname",
+              "displayName": "lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "jobtitle",
+              "displayName": "jobtitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "about",
+              "displayName": "about",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "bio ",
+              "displayName": "bio ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email_body",
+              "displayName": "email_body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_subject",
+              "displayName": "reply_subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_time",
+              "displayName": "reply_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        608,
+        -400
+      ],
+      "id": "6dc9b9fd-afec-4275-8439-49718b8a729f",
+      "name": "Final Update in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WPXsaefpBJEceZ7M",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -32
+      ],
+      "id": "dd93401b-9886-41d0-aa77-2609f1bd6a9d",
+      "name": "Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "operation": "getAll",
+        "returnAll": true,
+        "additionalFields": {
+          "propertiesCollection": {
+            "propertiesValues": {
+              "properties": [
+                "hs_linkedin_url",
+                "firstname",
+                "lastname",
+                "jobtitle",
+                "company",
+                "about",
+                "linkedin_headline"
+              ]
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.2,
+      "position": [
+        -368,
+        -32
+      ],
+      "id": "a8dba339-34f5-4feb-8923-befb3812ef82",
+      "name": "Hubspot API",
+      "credentials": {
+        "hubspotAppToken": {
+          "id": "bIIoERmbPn3FNjnQ",
+          "name": "HubSpot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  return {\n    json: {\n      firstname: item.json.properties.firstname?.value || \"\",\n      lastname: item.json.properties.lastname?.value || \"\",\n      email: item.json[\"identity-profiles\"][0].identities\n        .find(i => i.type === \"EMAIL\")?.value || \"\",\n      linkedin_url: item.json.properties.hs_linkedin_url?.value || \"\",\n      jobtitle: item.json.properties.jobtitle?.value || \"\",\n      company: item.json.properties.company?.value || \"\",\n      about: item.json.properties.about?.value || \"\",\n      bio: item.json.properties.linkedin_headline?.value || \"\",\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        -16
+      ],
+      "id": "29173eee-1337-4f16-8194-e42c08dbdd69",
+      "name": "Clean and clear"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n\n  const content = item.json.choices[0].message.content;\n\n  const subjectMatch = content.match(/Subject:\\s*(.*)/i);\n  const subject = subjectMatch ? subjectMatch[1].trim() : \"AI automation idea\";\n\n  const body = content.replace(/Subject:.*\\n/i, \"\").trim();\n\n  return {\n    json: {\n      firstname: item.json.firstname,\n      email: item.json.email,\n      company: item.json.company,\n      subject: subject,\n      email_body: body\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        -16
+      ],
+      "id": "02fb9552-11c5-45a3-8b17-6147205ce0ab",
+      "name": "Clean v2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://openrouter.ai/api/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openRouterApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n{\n  \"model\": \"openai/gpt-4o-mini\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a GTM automation specialist writing personalized cold outreach emails.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": `Write a short personalized outreach email introducing Anakin AI.\n\nRecipient:\nName: ${$json.firstname} ${$json.lastname}\nRole: ${$json.jobtitle}\nCompany: ${$json.company}\nBio: ${$json.bio}\nAbout: ${$json.about}\n\nInstructions:\n- Reference something specific from their role or expertise.\n- Connect it to how Anakin helps teams build AI apps and automate workflows.\n- Keep it under 90 words.\n- End with a friendly call-to-action.`\n    }\n  ]\n}\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        240,
+        -16
+      ],
+      "id": "942fcfa3-78c6-40c6-9bdc-c9c607a4c399",
+      "name": "Personalized email",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fVr6T52yHww3QqOW",
+          "name": "Header Auth account 6"
+        },
+        "openRouterApi": {
+          "id": "zCUMc9PqzQnM9hGv",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.resend.com/emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-type",
+              "value": "=application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "from",
+              "value": "=Aryan <hello@aryancore.in>"
+            },
+            {
+              "name": "to",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $json[\"subject\"] }}"
+            },
+            {
+              "name": "html",
+              "value": "={{\n\"<p>\" +\n\"Hi \" + $json.firstname + \" \" + $json.lastname + \",<br><br>\" +\n$json.email_body\n.replace(/^Hi[^\\n]*\\n\\n/, \"\") \n.replace(\"Best,  \\n[Your Name]\", \"\")\n.replace(/\\n/g,\"<br>\") +\n\"<br><br>Best,<br>Aryan<br>GTM Automation Engineer<br>aryan@aryancore.in</p>\"\n}}"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1040,
+        -288
+      ],
+      "id": "8290da62-8dcc-4891-9958-9789c9110edb",
+      "name": "Resend API",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jf5RHOfa4XOcDThp",
+          "name": "Header Auth account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ivETqLu7XA2PpUbEtbL0FMNisw05-knO-RjpsPWVLwU",
+          "mode": "list",
+          "cachedResultName": "GTM Assignment 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ivETqLu7XA2PpUbEtbL0FMNisw05-knO-RjpsPWVLwU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "ANAKIN OUTREACH",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ivETqLu7XA2PpUbEtbL0FMNisw05-knO-RjpsPWVLwU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "firstname": "={{ $json.firstname }}",
+            "lastname": "={{ $json.lastname }}",
+            "email": "={{ $json.email }}",
+            "linkedin_url": "={{ $json.linkedin_url }}",
+            "jobtitle": "={{ $json.jobtitle }}",
+            "company": "={{ $json.company }}",
+            "about": "={{ $json.about }}",
+            "bio ": "={{ $json.bio }}",
+            "subject": "={{ $json.subject }}",
+            "email_body": "={{ $json.email_body }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "firstname",
+              "displayName": "firstname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lastname",
+              "displayName": "lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "jobtitle",
+              "displayName": "jobtitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "about",
+              "displayName": "about",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "bio ",
+              "displayName": "bio ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email_body",
+              "displayName": "email_body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1552,
+        -288
+      ],
+      "id": "54c9220a-18ad-4d67-be42-ddde58c7da20",
+      "name": "Inserting of data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WPXsaefpBJEceZ7M",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Resend API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Inserting of data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Final Update in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resend Reply Webhook": {
+      "main": [
+        [
+          {
+            "node": "Clean and Extraction node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean and Extraction node": {
+      "main": [
+        [
+          {
+            "node": "Get action",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get action": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Hubspot API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hubspot API": {
+      "main": [
+        [
+          {
+            "node": "Clean and clear",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean and clear": {
+      "main": [
+        [
+          {
+            "node": "Personalized email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean v2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Personalized email": {
+      "main": [
+        [
+          {
+            "node": "Clean v2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resend API": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1715c260-415b-4d2c-8a7b-59f42d93ab04",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e0cab50cea7ca56264deb81c04aec58143422173472480219399f67fb899ed0"
+  },
+  "id": "ICbdUvOhIBBKPra2",
+  "tags": []
+}
